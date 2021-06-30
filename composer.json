@@ -3,38 +3,10 @@
     "description": "Modular factory for HTML pages",
     "keywords": [ "html", "http", "factory", "rdfa" ],
     "license": "Apache-2.0",
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/rv1971/alcamo-core"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/rv1971/alcamo-html-creation"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/rv1971/alcamo-http"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/rv1971/alcamo-process"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/rv1971/alcamo-rdfa"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/rv1971/alcamo-xml-creation"
-        }
-    ],
-    "minimum-stability": "dev",
-    "prefer-stable": true,
     "require": {
         "php": "7.3 - 7.4",
-        "alcamo/core": "dev-master",
-        "alcamo/http": "dev-master"
+        "alcamo/core": "^0.1",
+        "alcamo/http": "^0.1"
     },
     "autoload": {
 	"psr-4": {

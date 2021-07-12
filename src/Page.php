@@ -6,6 +6,12 @@ use Laminas\Diactoros\Stream;
 use alcamo\http\Response;
 
 /**
+ * @namespace alcamo::html_page
+ *
+ * @brief Modular factory for HTML pages
+ */
+
+/**
  * @brief HTML page consisting of an HTML factory and a PSR7 message body
  * stream
  *

@@ -5,8 +5,10 @@
     "license": "Apache-2.0",
     "require": {
         "php": "7.3 - 8.0",
-        "alcamo/core": "^0.3",
-        "alcamo/http": "^0.3"
+        "alcamo/core": "^0.4",
+        "alcamo/exception": "^0.1",
+        "alcamo/html-creation": "^0.4",
+        "alcamo/http": "^0.4"
     },
     "autoload": {
 	"psr-4": {

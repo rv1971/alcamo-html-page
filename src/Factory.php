@@ -3,7 +3,6 @@
 namespace alcamo\html_page;
 
 use SebastianBergmann\Exporter\Exporter;
-use alcamo\exception\FileLocation;
 use alcamo\html_creation\element\{B, P, Ul};
 use alcamo\modular_class\ModularClassTrait;
 use alcamo\rdfa\{HasRdfaDataTrait, RdfaData};
@@ -81,9 +80,11 @@ class Factory implements \Countable, \Iterator, \ArrayAccess
     {
         $exporter = new Exporter();
 
-        $codeLocation = FileLocation::newFromThrowable($e);
-
-        $result = [ new P([ new B(get_class($e)), " at $codeLocation" ]) ];
+        $result = [
+            new P(
+                [ new B(get_class($e)), " at {$e->getFile()}:{$e->getLine()}" ]
+            )
+        ];
 
         $result[] = new P(new B($e->getMessage()));
 
@@ -101,7 +102,7 @@ class Factory implements \Countable, \Iterator, \ArrayAccess
             $itemHtml = [ "{$item['function']}()" ];
 
             if (isset($item['file'])) {
-                $itemHtml[] = ' in ' . FileLocation::newFromBacktraceItem($item);
+                $itemHtml[] = " in {$item['file']}:{$item['line']}";
             }
 
             $result[] = new P($itemHtml);

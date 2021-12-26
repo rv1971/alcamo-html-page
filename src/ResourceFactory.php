@@ -34,9 +34,14 @@ class ResourceFactory
         ?array $attrs = null
     ): Element {
         /** Determine the media type from filename unless the type is set in
-         *  $attrs. */
+         *  $attrs. Transform the `type` attribute into a MediaType object if
+         *  it looks like one. Currently anything containing a slash is
+         *  considered to look like a media type. The distinction is needed to
+         *  allow the value `module` for the `type` attribute in `\<script>`
+         *  elements. */
         $type = isset($attrs['type'])
             ? ($attrs['type'] instanceof MediaType
+               || strpos($attrs['type'], '/') === false
                ? $attrs['type']
                : MediaType::newFromString($attrs['type']))
             : MediaType::newFromFilename($path);
@@ -55,8 +60,16 @@ class ResourceFactory
         }
 
         switch ($type->getTypeAndSubtype()) {
-            /** Create a Script if $path is a JavaScript file. */
+            /** Create a Script if $path is a JavaScript file. Set the
+             *  `type`to `module` for a `*.mjs` file. */
             case 'application/javascript':
+                if (
+                    !isset($attrs['type'])
+                    && pathinfo($path, PATHINFO_EXTENSION) == 'mjs'
+                ) {
+                    $attrs['type'] = 'module';
+                }
+
                 return Script::newFromLocalUrl($url, $attrs, $path);
 
             /** Create a Stylesheet if $path is a CSS file. */

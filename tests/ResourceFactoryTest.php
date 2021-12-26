@@ -39,6 +39,8 @@ class ResourceFactoryTest extends TestCase
 
         $jsPath = __DIR__ . DIRECTORY_SEPARATOR . 'alcamo.js';
 
+        $mjsPath = __DIR__ . DIRECTORY_SEPARATOR . 'alcamo.mjs';
+
         $png16Path = __DIR__ . DIRECTORY_SEPARATOR . 'alcamo-16.png';
 
         $svgPath = __DIR__ . DIRECTORY_SEPARATOR . 'alcamo.svg';
@@ -50,6 +52,8 @@ class ResourceFactoryTest extends TestCase
         $mJson = gmdate('YmdHis', filemtime($jsonPath));
 
         $mJs = gmdate('YmdHis', filemtime($jsPath));
+
+        $mMjs = gmdate('YmdHis', filemtime($mjsPath));
 
         $mJsGz = gmdate('YmdHis', filemtime("$jsPath.gz"));
 
@@ -66,6 +70,7 @@ class ResourceFactoryTest extends TestCase
                     $cssPath,
                     [ $jsonPath, 'manifest' ],
                     $jsPath,
+                    $mjsPath,
                     $png16Path,
                     $svgPath
                 ],
@@ -73,12 +78,14 @@ class ResourceFactoryTest extends TestCase
                     Stylesheet::class,
                     Link::class,
                     Script::class,
+                    Script::class,
                     Icon::class,
                     Icon::class
                 ],
                 "<link rel=\"stylesheet\" href=\"/test/alcamo.css?m=$mCss\"/>"
                 . "<link type=\"application/json\" rel=\"manifest\" href=\"/test/alcamo.json?m=$mJson\"/>"
                 . "<script src=\"/test/alcamo.js?m=$mJs\"></script>"
+                . "<script src=\"/test/alcamo.mjs?m=$mMjs\" type=\"module\"></script>"
                 . "<link type=\"image/png\" sizes=\"16x16\" rel=\"icon\" "
                 . "href=\"/test/alcamo-16.png?m=$mPng16\"/>"
                 . "<link type=\"image/svg+xml\" sizes=\"any\" rel=\"icon\" "

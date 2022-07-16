@@ -23,7 +23,7 @@ class Page
     private $body_;        ///< Stream
     private $statusCode_;  ///< integer
 
-    public function __construct(?Factory $htmlFactory)
+    public function __construct(?Factory $htmlFactory = null)
     {
         /** If $factory is not given, create an insatnce of Factory. */
         $this->htmlFactory_ = $htmlFactory ?? new Factory();

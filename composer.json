@@ -6,8 +6,8 @@
     "require": {
         "php": "7.3 - 8.0",
         "alcamo/exception": "^0.1",
-        "alcamo/html-creation": "^0.6",
-        "alcamo/http": "^0.6"
+        "alcamo/html-creation": "^0.7",
+        "alcamo/http": "^0.7"
     },
     "autoload": {
 	"psr-4": {

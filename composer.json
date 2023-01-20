@@ -3,11 +3,12 @@
     "description": "Modular factory for HTML pages",
     "keywords": [ "html", "http", "factory", "rdfa" ],
     "license": "Apache-2.0",
+    "minimum-stability": "dev",
     "require": {
         "php": "7.3 - 8.0",
         "alcamo/exception": "^0.1",
         "alcamo/html-creation": "^0.7",
-        "alcamo/http": "^0.7"
+        "alcamo/http": "dev-experimental"
     },
     "autoload": {
 	"psr-4": {

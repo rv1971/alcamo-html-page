@@ -8,8 +8,6 @@ use alcamo\xml_creation\{Comment, DoctypeDecl, Nodes};
 
 /**
  * @brief HTML code factory module for the enitre page
- *
- * @date Last reviewed 2021-06-24
  */
 class PageFactory
 {
@@ -33,11 +31,13 @@ class PageFactory
 
     private $created_;         ///< Microtime of creation of this object
     private $resourceFactory_; ///< ResourceFactory
+    private $rdfa2Html_;       ///< Rdfa2Html
 
     public function __construct(?ResourceFactory $resourceFactory = null)
     {
         $this->created_ = microtime(true);
         $this->resourceFactory_ = $resourceFactory;
+        $this->rdfa2Html_ = new Rdfa2Html();
     }
 
     public function getResourceFactory(): ?ResourceFactory
@@ -70,22 +70,21 @@ class PageFactory
     /// Default attributes for the \<html> element
     public function createDefaultHtmlAttrs(): array
     {
-        /** - @ref DEFAULT_HTML_ATTRS */
-        $attrs = static::DEFAULT_HTML_ATTRS;
+        /**
+         * - namespace prefixes needed for RDFa data
+         * - @ref DEFAULT_HTML_ATTRS
+         */
+        $attrs = $this->rdfa2Html_->rdfaData2NsAttrs($this->rdfaData_)
+            + static::DEFAULT_HTML_ATTRS;
 
-        /** - namespace prefixes needed for RDFa data */
-        foreach ($this->getRdfaData()->getPrefixMap() as $prefix => $ns) {
-            $attrs["xmlns:$prefix"] = $ns;
+        /** - `id` from `dc:identifier` if present in the RDFa data. */
+        if (isset($this->rdfaData_['dc:identifier'])) {
+            $attrs['id'] = $this->rdfaData_['dc:identifier'];
         }
 
-        /** - `id` from `dc:identifier` if present in the RDFA data. */
-        if (isset($this->getRdfaData()['dc:identifier'])) {
-            $attrs['id'] = $this->getRdfaData()['dc:identifier'];
-        }
-
-        /** - `lang` from `dc:language` if present in the RDFA data. */
-        if (isset($this->getRdfaData()['dc:language'])) {
-            $attrs['lang'] = $this->getRdfaData()['dc:language'];
+        /** - `lang` from `dc:language` if present in the RDFa data. */
+        if (isset($this->rdfaData_['dc:language'])) {
+            $attrs['lang'] = $this->rdfaData_['dc:language'];
         }
 
         return $attrs;
@@ -114,7 +113,7 @@ class PageFactory
         ?array $attrs = null
     ): Head {
         /** - HTML nodes created from the RDFa data. */
-        $content = [ $this->getRdfaData()->toHtmlNodes() ];
+        $content = [ $this->rdfa2Html_->rdfaData2Html($this->rdfaData_) ];
 
         /** - HTML nodes created from $resources */
         if (isset($resources)) {

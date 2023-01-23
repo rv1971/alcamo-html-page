@@ -5,7 +5,7 @@ namespace alcamo\html_page;
 use SebastianBergmann\Exporter\Exporter;
 use alcamo\html_creation\element\{B, P, Ul};
 use alcamo\modular_class\ModularClassTrait;
-use alcamo\rdfa\{HasRdfaDataTrait, RdfaData};
+use alcamo\rdfa\RdfaData;
 use alcamo\url_creation\{
     HasUrlFactoryTrait,
     TrivialUrlFactory,
@@ -18,12 +18,9 @@ use alcamo\xml_creation\Nodes;
  *
  * Implemented as a modular class using
  * alcamo::modular_class::ModularClassTrait.
- *
- * @date Last reviewed 2021-06-24
  */
 class Factory implements \Countable, \Iterator, \ArrayAccess
 {
-    use HasRdfaDataTrait;
     use HasUrlFactoryTrait;
     use ModularClassTrait;
 
@@ -31,6 +28,8 @@ class Factory implements \Countable, \Iterator, \ArrayAccess
     public const DEFAULT_RDFA_DATA = [
         'dc:format' => 'application/xhtml+xml; charset="UTF-8"'
     ];
+
+    private $rdfaData_; ///< RdfaData
 
     public static function newFromRdfaData(
         iterable $rdfaData,
@@ -68,6 +67,11 @@ class Factory implements \Countable, \Iterator, \ArrayAccess
         if (!isset($this['page'])) {
             $this->addModule(new PageFactory());
         }
+    }
+
+    public function getRdfaData(): RdfaData
+    {
+        return $this->rdfaData_;
     }
 
     public function setRdfaData(RdfaData $rdfaData): void

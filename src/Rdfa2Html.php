@@ -49,8 +49,7 @@ class Rdfa2html
             ? [ 'property' => $stmt->getPropCurie() ]
             : [];
 
-        switch ($uri)
-        {
+        switch ($uri) {
             case DcFormat::PROP_URI:
                 return null;
 

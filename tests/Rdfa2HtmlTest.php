@@ -348,7 +348,8 @@ class Rdfa2HtmlTest extends TestCase
                         [
                             'property' => 'dc:abstract',
                             'name' => 'description',
-                            'content' => 'Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.'
+                            'content' =>
+                            'Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.'
                         ]
                     )
                 ]

@@ -10,7 +10,7 @@ use alcamo\html_creation\element\{
     Script,
     Stylesheet
 };
-use alcamo\iana\MediaType;
+use alcamo\rdfa\MediaType;
 use alcamo\url_creation\{HasUrlFactoryTrait, UrlFactoryInterface};
 use alcamo\xml_creation\Nodes;
 

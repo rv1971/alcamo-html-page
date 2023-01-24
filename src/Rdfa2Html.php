@@ -5,6 +5,7 @@ namespace alcamo\html_page;
 use alcamo\rdfa\{
     DcAbstract,
     DcCreator,
+    DcFormat,
     DcSource,
     DcTitle,
     MetaCharset,
@@ -16,7 +17,7 @@ use alcamo\rdfa\{
     StmtInterface
 };
 use alcamo\html_creation\Element;
-use alcamo\html_creation\element\{Link, Meta, Title};
+use alcamo\html_creation\element\{A, Link, Meta, Title};
 use alcamo\xml_creation\Nodes as HtmlNodes;
 
 class Rdfa2html
@@ -45,18 +46,21 @@ class Rdfa2html
 
         /* Do not include proprietary properties into HTML. */
         $attrs = substr($uri, 0, 4) != 'tag:'
-            ? [ 'property' => $stmt->getCurie() ]
+            ? [ 'property' => $stmt->getPropCurie() ]
             : [];
 
         switch ($uri)
         {
+            case DcFormat::PROP_URI:
+                return null;
+
             case DcTitle::PROP_URI:
                 return new Title((string)$stmt, $attrs);
 
             case MetaCharset::PROP_URI:
                 $attrs['charset'] = (string)$stmt;
 
-                return new Meta(null, $attrs);
+                return new Meta($attrs);
 
             default:
                 $metaName = static::PROP_URI_TO_META_NAME[$uri] ?? null;
@@ -69,7 +73,7 @@ class Rdfa2html
                 if ($attrs) {
                     $attrs['content'] = (string)$stmt;
 
-                    return new Meta(null, $attrs);
+                    return new Meta($attrs);
                 } else {
                     return null;
                 }
@@ -98,16 +102,22 @@ class Rdfa2html
 
         $node = $stmt->getObject();
 
-        $attrs = [ 'href' => $uri, 'rel' => $rel ];
+        $attrs = [ 'href' => (string)$stmt->getObject(), 'rel' => $rel ];
 
         $rdfaData = $node->getRdfaData();
 
         if (isset($rdfaData)) {
-            $attrs['type'] = $rdfaData['dc:format'] ?? null;
+            if (isset($rdfaData['dc:format'])) {
+                $attrs['type'] = (string)$rdfaData['dc:format'];
+            }
 
-            $attrs['hreflang'] = $rdfaData['dc:language'] ?? null;
+            if (isset($rdfaData['dc:language'])) {
+                $attrs['hreflang'] = (string)$rdfaData['dc:language'];
+            }
 
-            $attrs['title'] = $rdfaData['dc:title'] ?? null;
+            if (isset($rdfaData['dc:title'])) {
+                $attrs['title'] = (string)$rdfaData['dc:title'];
+            }
         }
 
         return new Link(null, $attrs);
@@ -116,30 +126,44 @@ class Rdfa2html
     /** @param $stmt Statement whose object is a Node. */
     public function stmt2A(StmtInterface $stmt): A
     {
-        $node = $stmt->getObject();
+        $uri = $stmt->getPropUri();
 
-        $attrs = [
-            'href' => $node->getUri(),
-            'rel' => $stmt->getPropCurie()
-        ];
+        /* Do not include proprietary properties into HTML. */
+        $rel = substr($uri, 0, 4) != 'tag:'
+            ? $stmt->getPropCurie()
+            : null;
 
-        $htmlRel = static::PROP_URI_TO_HTML_REL[$stmt->getPropUri()] ?? null;
+        $htmlRel = static::PROP_URI_TO_HTML_REL[$uri] ?? null;
 
         if (isset($htmlRel)) {
-            $attrs['rel'] .= " $htmlRel";
+            $rel = isset($rel) ? "$rel $htmlRel" : $htmlRel;
+        }
+
+        $node = $stmt->getObject();
+
+        $attrs = [ 'href' => $node->getUri() ];
+
+        if (isset($rel)) {
+            $attrs['rel'] = $rel;
         }
 
         $rdfaData = $node->getRdfaData();
 
         if (isset($rdfaData)) {
-            $attrs['type'] = $rdfaData['dc:format'] ?? null;
+            if (isset($rdfaData['dc:format'])) {
+                $attrs['type'] = (string)$rdfaData['dc:format'];
+            }
 
-            $attrs['hreflang'] = $rdfaData['dc:language'] ?? null;
+            if (isset($rdfaData['dc:language'])) {
+                $attrs['hreflang'] = (string)$rdfaData['dc:language'];
+            }
 
-            $title = $rdfaData['dc:title'] ?? null;
+            if (isset($rdfaData['dc:title'])) {
+                $title = (string)$rdfaData['dc:title'];
+            }
         }
 
-        return new A($title ?? ucfirst($node->getPropLocalName()), $attrs);
+        return new A($title ?? ucfirst($stmt->getPropLocalName()), $attrs);
     }
 
     public function rdfaData2Html(RdfaData $rdfaData): HtmlNodes
@@ -153,15 +177,19 @@ class Rdfa2html
 
         foreach ($rdfaData as $stmts) {
             foreach (is_array($stmts) ? $stmts : [ $stmts ] as $stmt) {
-                if ($stmt->getUri() != MetaCharset::PROP_URI) {
-                    $htmlNodes[] = $stmt->getObject() instanceof Node
+                if ($stmt->getPropUri() != MetaCharset::PROP_URI) {
+                    $element = $stmt->getObject() instanceof Node
                         ? $this->stmt2Link($stmt)
                         : $this->stmt2Meta($stmt);
+
+                    if (isset($element)) {
+                        $htmlNodes[] = $element;
+                    }
                 }
             }
         }
 
-        return new Nodes($htmlNodes);
+        return new HtmlNodes($htmlNodes);
     }
 
     public function rdfaData2NsAttrs(RdfaData $rdfaData): array
@@ -169,7 +197,10 @@ class Rdfa2html
         $attrs = [];
 
         foreach ($rdfaData->createNamespaceMap() as $prefix => $nsName) {
-            $attrs["xmlns:$prefix"] = $nsName;
+            /* Do not include proprietary namespaces into HTML. */
+            if (substr($nsName, 0, 4) != 'tag:') {
+                $attrs["xmlns:$prefix"] = $nsName;
+            }
         }
 
         return $attrs;

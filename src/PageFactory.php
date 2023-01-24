@@ -70,21 +70,23 @@ class PageFactory
     /// Default attributes for the \<html> element
     public function createDefaultHtmlAttrs(): array
     {
+        $rdfaData = $this->getRdfaData();
+
         /**
          * - namespace prefixes needed for RDFa data
          * - @ref DEFAULT_HTML_ATTRS
          */
-        $attrs = $this->rdfa2Html_->rdfaData2NsAttrs($this->rdfaData_)
-            + static::DEFAULT_HTML_ATTRS;
+        $attrs = static::DEFAULT_HTML_ATTRS
+            + $this->rdfa2Html_->rdfaData2NsAttrs($rdfaData);
 
         /** - `id` from `dc:identifier` if present in the RDFa data. */
-        if (isset($this->rdfaData_['dc:identifier'])) {
-            $attrs['id'] = $this->rdfaData_['dc:identifier'];
+        if (isset($rdfaData['dc:identifier'])) {
+            $attrs['id'] = $rdfaData['dc:identifier'];
         }
 
         /** - `lang` from `dc:language` if present in the RDFa data. */
-        if (isset($this->rdfaData_['dc:language'])) {
-            $attrs['lang'] = $this->rdfaData_['dc:language'];
+        if (isset($rdfaData['dc:language'])) {
+            $attrs['lang'] = $rdfaData['dc:language'];
         }
 
         return $attrs;
@@ -113,7 +115,7 @@ class PageFactory
         ?array $attrs = null
     ): Head {
         /** - HTML nodes created from the RDFa data. */
-        $content = [ $this->rdfa2Html_->rdfaData2Html($this->rdfaData_) ];
+        $content = [ $this->rdfa2Html_->rdfaData2Html($this->getRdfaData()) ];
 
         /** - HTML nodes created from $resources */
         if (isset($resources)) {

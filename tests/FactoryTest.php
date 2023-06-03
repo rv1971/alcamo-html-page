@@ -160,6 +160,16 @@ class FactoryTest extends TestCase
         $eWithProps->intValue = 42;
         $eWithProps->stringValue = 'foo';
 
+        $domDoc = new \DOMDocument();
+
+        $domDoc->loadXML(
+            '<?xml version="1.0" encoding="UTF-8"?><foo><bar baz="qux"/></foo>'
+        );
+
+        $eWithDomNodeProp =
+            new \UnexpectedValueException('sed diam nonumy eirmod');
+        $eWithDomNodeProp->inData = $domDoc->documentElement->firstChild;
+
         return [
             'simple' => [
                 $factory,
@@ -175,6 +185,14 @@ class FactoryTest extends TestCase
                 . '<p><b>consetetur sadipscing elitr</b></p>'
                 . '<ul><li>intValue = 42</li>'
                 . "<li>stringValue = 'foo'</li></ul>"
+                . '<p>renderThrowableProvider()</p>'
+            ],
+            'with-dom-node-prop' => [
+                $factory,
+                $eWithDomNodeProp,
+                '<p><b>' . \UnexpectedValueException::class . '</b> at ' . __FILE__ . ':170</p>'
+                . '<p><b>sed diam nonumy eirmod</b></p>'
+                . '<ul><li>inData = &lt;bar baz="qux"/&gt;</li></ul>'
                 . '<p>renderThrowableProvider()</p>'
             ]
         ];

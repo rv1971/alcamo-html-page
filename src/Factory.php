@@ -95,7 +95,16 @@ class Factory implements \Countable, \Iterator, \ArrayAccess
         $props = [];
 
         foreach (get_object_vars($e) as $key => $value) {
-            $props[] = "$key = " . $exporter->export($value);
+            switch (true) {
+                case $value instanceof \DOMNode:
+                    $displayValue = $value->ownerDocument->saveXML($value);
+                    break;
+
+                default:
+                    $displayValue = $exporter->export($value);
+            }
+
+            $props[] = "$key = " . $displayValue;
         }
 
         if ($props) {

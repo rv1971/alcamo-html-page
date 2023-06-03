@@ -11,7 +11,7 @@ use alcamo\url_creation\{
     TrivialUrlFactory,
     UrlFactoryInterface
 };
-use alcamo\xml_creation\Nodes;
+use alcamo\xml_creation\{Nodes, Raw};
 
 /**
  * @brief Factory for HTML code
@@ -96,6 +96,12 @@ class Factory implements \Countable, \Iterator, \ArrayAccess
 
         foreach (get_object_vars($e) as $key => $value) {
             switch (true) {
+                case $value instanceof \DOMElement
+                    && $value->namespaceURI == 'http://www.w3.org/1999/xhtml':
+                    $displayValue =
+                        new Raw($value->ownerDocument->saveXML($value));
+                    break;
+
                 case $value instanceof \DOMNode:
                     $displayValue = $value->ownerDocument->saveXML($value);
                     break;
@@ -104,7 +110,7 @@ class Factory implements \Countable, \Iterator, \ArrayAccess
                     $displayValue = $exporter->export($value);
             }
 
-            $props[] = "$key = " . $displayValue;
+            $props[] = [ "$key = ", $displayValue ];
         }
 
         if ($props) {

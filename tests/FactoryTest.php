@@ -160,6 +160,17 @@ class FactoryTest extends TestCase
         $eWithProps->intValue = 42;
         $eWithProps->stringValue = 'foo';
 
+        $htmlDoc = new \DOMDocument();
+
+        $htmlDoc->loadXML(
+            '<?xml version="1.0" encoding="UTF-8"?>'
+            . '<div xmlns="http://www.w3.org/1999/xhtml"><b>ut labore et dolore magna</b></div>'
+        );
+
+        $eWithHtmlElemProp =
+            new \UnexpectedValueException('tempor invidunt');
+        $eWithHtmlElemProp->extraMessage = $htmlDoc->documentElement->firstChild;
+
         $domDoc = new \DOMDocument();
 
         $domDoc->loadXML(
@@ -187,10 +198,18 @@ class FactoryTest extends TestCase
                 . "<li>stringValue = 'foo'</li></ul>"
                 . '<p>renderThrowableProvider()</p>'
             ],
+            'with-html-element-prop' => [
+                $factory,
+                $eWithHtmlElemProp,
+                '<p><b>' . \UnexpectedValueException::class . '</b> at ' . __FILE__ . ':171</p>'
+                . '<p><b>tempor invidunt</b></p>'
+                . '<ul><li>extraMessage = <b>ut labore et dolore magna</b></li></ul>'
+                . '<p>renderThrowableProvider()</p>'
+            ],
             'with-dom-node-prop' => [
                 $factory,
                 $eWithDomNodeProp,
-                '<p><b>' . \UnexpectedValueException::class . '</b> at ' . __FILE__ . ':170</p>'
+                '<p><b>' . \UnexpectedValueException::class . '</b> at ' . __FILE__ . ':181</p>'
                 . '<p><b>sed diam nonumy eirmod</b></p>'
                 . '<ul><li>inData = &lt;bar baz="qux"/&gt;</li></ul>'
                 . '<p>renderThrowableProvider()</p>'

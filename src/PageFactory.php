@@ -81,12 +81,12 @@ class PageFactory
 
         /** - `id` from `dc:identifier` if present in the RDFa data. */
         if (isset($rdfaData['dc:identifier'])) {
-            $attrs['id'] = $rdfaData['dc:identifier'];
+            $attrs['id'] = array_values($rdfaData['dc:identifier'])[0];
         }
 
         /** - `lang` from `dc:language` if present in the RDFa data. */
         if (isset($rdfaData['dc:language'])) {
-            $attrs['lang'] = $rdfaData['dc:language'];
+            $attrs['lang'] = array_values($rdfaData['dc:language'])[0];
         }
 
         return $attrs;

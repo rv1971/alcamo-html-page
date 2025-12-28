@@ -68,7 +68,7 @@ class ErrorPageTest extends TestCase
                 0,
                 Response::class,
                 404
-            ],
+                ],
             'FileNotFound-long' => [
                 new FileNotFound('foo.txt'),
                 1,

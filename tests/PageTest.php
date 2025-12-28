@@ -13,8 +13,8 @@ class PageTest extends TestCase
     {
         $rdfaData = RdfaData::newFromIterable(
             [
-                'dc:format' => 'application/xhtml+xml',
-                'dc:title' => 'Lorem ipsum'
+                [ 'dc:format', 'application/xhtml+xml' ],
+                  [ 'dc:title', 'Lorem ipsum' ]
             ]
         );
 

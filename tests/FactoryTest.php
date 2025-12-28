@@ -83,7 +83,7 @@ class FactoryTest extends TestCase
 
         return [
             'simple' => [
-                [ 'dc:title' => 'Foo | Bar' ],
+                [ [ 'dc:title', 'Foo | Bar' ] ],
                 null,
                 null,
                 null,
@@ -91,7 +91,6 @@ class FactoryTest extends TestCase
                 . '<html xmlns="http://www.w3.org/1999/xhtml" '
                 . 'xmlns:dc="http://purl.org/dc/terms/">'
                 . '<head>'
-                . '<meta charset="UTF-8"/>'
                 . '<title property="dc:title">Foo | Bar</title>'
                 . '</head>'
                 . '<body>Lorem ipsum.</body>'
@@ -100,9 +99,9 @@ class FactoryTest extends TestCase
             ],
             'with-metadata-and-resources' => [
                 [
-                    'dc:identifier' => 'baz.qux',
-                    'dc:language' => 'en-UG',
-                    'owl:versionInfo' => '42.43.44'
+                    [ 'dc:identifier', 'baz.qux' ],
+                    [ 'dc:language', 'en-UG' ],
+                    [ 'owl:versionInfo', '42.43.44' ]
                 ],
                 new DirMapUrlFactory(__DIR__, '/'),
                 [
@@ -117,7 +116,6 @@ class FactoryTest extends TestCase
                 . 'xmlns:owl="http://www.w3.org/2002/07/owl#" '
                 . 'id="baz.qux" lang="en-UG">'
                 . '<head>'
-                . '<meta charset="UTF-8"/>'
                 . '<meta property="dc:identifier" content="baz.qux"/>'
                 . '<meta property="dc:language" content="en-UG"/>'
                 . '<meta property="owl:versionInfo" content="42.43.44"/>'
@@ -185,14 +183,14 @@ class FactoryTest extends TestCase
             'simple' => [
                 $factory,
                 $eSimple,
-                '<p><b>' . \Exception::class . '</b> at ' . __FILE__ . ':156</p>'
+                '<p><b>' . \Exception::class . '</b> at ' . __FILE__ . ':154</p>'
                 . '<p><b>Lorem ipsum</b></p>'
-                . '<p>alcamo\html_page\{closure}() in ' . __FILE__ . ':157</p>'
+                . '<p>alcamo\html_page\{closure}() in ' . __FILE__ . ':155</p>'
             ],
             'with-props' => [
                 $factory,
                 $eWithProps,
-                '<p><b>' . \LogicException::class . '</b> at ' . __FILE__ . ':159</p>'
+                '<p><b>' . \LogicException::class . '</b> at ' . __FILE__ . ':157</p>'
                 . '<p><b>consetetur sadipscing elitr</b></p>'
                 . '<ul><li>intValue = 42</li>'
                 . "<li>stringValue = 'foo'</li></ul>"
@@ -201,7 +199,7 @@ class FactoryTest extends TestCase
             'with-html-element-prop' => [
                 $factory,
                 $eWithHtmlElemProp,
-                '<p><b>' . \UnexpectedValueException::class . '</b> at ' . __FILE__ . ':171</p>'
+                '<p><b>' . \UnexpectedValueException::class . '</b> at ' . __FILE__ . ':169</p>'
                 . '<p><b>tempor invidunt</b></p>'
                 . '<ul><li>extraMessage = <b>ut labore et dolore magna</b></li></ul>'
                 . '<p>renderThrowableProvider()</p>'
@@ -209,7 +207,7 @@ class FactoryTest extends TestCase
             'with-dom-node-prop' => [
                 $factory,
                 $eWithDomNodeProp,
-                '<p><b>' . \UnexpectedValueException::class . '</b> at ' . __FILE__ . ':181</p>'
+                '<p><b>' . \UnexpectedValueException::class . '</b> at ' . __FILE__ . ':179</p>'
                 . '<p><b>sed diam nonumy eirmod</b></p>'
                 . '<ul><li>inData = &lt;bar baz="qux"/&gt;</li></ul>'
                 . '<p>renderThrowableProvider()</p>'

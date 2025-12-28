@@ -10,15 +10,12 @@ use alcamo\rdfa\{
     DcSource,
     DcTitle,
     HttpCacheControl,
-    MetaCharset,
     Node,
     OwlVersionInfo,
     RdfaData,
-    RelContents,
-    RelHome,
-    RelUp,
     SimpleStmt,
-    StmtInterface
+    StmtInterface,
+    XhvMetaStmt
 };
 use alcamo\html_creation\element\{A, Link, Meta, Title};
 use alcamo\xml_creation\Nodes as HtmlNodes;
@@ -51,10 +48,6 @@ class Rdfa2HtmlTest extends TestCase
                 new Title('Lorem ipsum', [ 'property' => 'dc:title' ])
             ],
             [
-                new MetaCharset('UTF-8'),
-                new Meta([ 'charset' => 'UTF-8' ])
-            ],
-            [
                 new DcCreator('Alice'),
                 new Meta(
                     [
@@ -72,8 +65,7 @@ class Rdfa2HtmlTest extends TestCase
                     [
                         'name' => 'description',
                         'property' => 'dc:abstract',
-                        'content' =>
-                        'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.'
+                        'content' => 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.'
                     ]
                 )
             ],
@@ -125,7 +117,7 @@ class Rdfa2HtmlTest extends TestCase
                     new Node(
                         'http://de.example.com/quelle',
                         RdfaData::newFromIterable(
-                            [ 'dc:language' => 'de-LI' ]
+                            [ [ 'dc:language', 'de-LI' ] ]
                         )
                     )
                 ),
@@ -138,13 +130,14 @@ class Rdfa2HtmlTest extends TestCase
                 )
             ],
             [
-                new RelContents(
+                new XhvMetaStmt(
+                    'contents',
                     new Node(
                         'http://example.com/toc',
                         RdfaData::newFromIterable(
                             [
-                                'dc:format' => 'application/pdf',
-                                'dc:title' => 'Table of contents'
+                                [ 'dc:format', 'application/pdf' ],
+                                [ 'dc:title', 'Table of contents' ]
                             ]
                         )
                     )
@@ -152,31 +145,30 @@ class Rdfa2HtmlTest extends TestCase
                 new Link(
                     'http://example.com/toc',
                     [
-                        'rel' => 'contents',
+                        'rel' => 'xhv:contents contents',
                         'title' => 'Table of contents',
                         'type' => 'application/pdf'
                     ]
                 )
             ],
             [
-                new RelHome(new Node('http://example.com')),
-                new Link('http://example.com', [ 'rel' => 'home' ])
+                new XhvMetaStmt('home', new Node('http://example.com')),
+                new Link('http://example.com', [ 'rel' => 'xhv:home home' ])
             ],
             [
-                new RelUp(
+                new XhvMetaStmt(
+                    'up',
                     new Node(
                         'http://example.com/chapter',
                         RdfaData::newFromIterable(
-                            [
-                                'dc:title' => 'Chapter 42'
-                            ]
+                            [ [ 'dc:title', 'Chapter 42' ] ]
                         )
                     )
                 ),
                 new Link(
                     'http://example.com/chapter',
                     [
-                        'rel' => 'up',
+                        'rel' => 'xhv:up up',
                         'title' => 'Chapter 42'
                     ]
                 )
@@ -228,7 +220,7 @@ class Rdfa2HtmlTest extends TestCase
                     new Node(
                         'http://de.example.com/quelle',
                         RdfaData::newFromIterable(
-                            [ 'dc:language' => 'de-LI' ]
+                            [ [ 'dc:language', 'de-LI' ] ]
                         )
                     )
                 ),
@@ -242,13 +234,14 @@ class Rdfa2HtmlTest extends TestCase
                 )
             ],
             [
-                new RelContents(
+                new XhvMetaStmt(
+                    'contents',
                     new Node(
                         'http://example.com/toc',
                         RdfaData::newFromIterable(
                             [
-                                'dc:format' => 'application/pdf',
-                                'dc:title' => 'Table of contents'
+                                [ 'dc:format', 'application/pdf' ],
+                                [ 'dc:title', 'Table of contents' ]
                             ]
                         )
                     )
@@ -257,26 +250,25 @@ class Rdfa2HtmlTest extends TestCase
                     'Table of contents',
                     [
                         'href' => 'http://example.com/toc',
-                        'rel' => 'contents',
+                        'rel' => 'xhv:contents contents',
                         'type' => 'application/pdf'
                     ]
                 )
             ],
             [
-                new RelHome(new Node('http://example.com')),
+                new XhvMetaStmt('home', new Node('http://example.com')),
                 new A(
                     'Home',
-                    [ 'href' => 'http://example.com', 'rel' => 'home' ]
+                    [ 'href' => 'http://example.com', 'rel' => 'xhv:home home' ]
                 )
             ],
             [
-                new RelUp(
+                new XhvMetaStmt(
+                    'up',
                     new Node(
                         'http://example.com/chapter',
                         RdfaData::newFromIterable(
-                            [
-                                'dc:title' => 'Chapter 42'
-                            ]
+                            [ [ 'dc:title', 'Chapter 42' ] ]
                         )
                     )
                 ),
@@ -284,7 +276,7 @@ class Rdfa2HtmlTest extends TestCase
                     'Chapter 42',
                     [
                         'href' => 'http://example.com/chapter',
-                        'rel' => 'up'
+                        'rel' => 'xhv:up up'
                     ]
                 )
             ],
@@ -323,16 +315,19 @@ class Rdfa2HtmlTest extends TestCase
         return [
             [
                 [
-                    'dc:title' => 'Lorem ipsum',
-                    'dc:alternative' => 'At vero eos',
-                    'dc:format' => 'text/html; charset=US-ASCII',
-                    'dc:audience' =>
-                    new Node('https://example.com/premium-customers'),
-                    'dc:abstract' =>
-                    'Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.'
+                    [ 'dc:title', 'Lorem ipsum' ],
+                    [ 'dc:alternative', 'At vero eos' ],
+                    [ 'dc:format', 'text/html; charset=US-ASCII' ],
+                    [
+                        'dc:audience',
+                        new Node('https://example.com/premium-customers')
+                    ],
+                    [
+                        'dc:abstract',
+                        'Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.'
+                    ]
                 ],
                 [
-                    new Meta([ 'charset' => 'US-ASCII' ]),
                     new Title('Lorem ipsum', [ 'property' => 'dc:title' ]),
                     new Meta(
                         [
@@ -348,8 +343,8 @@ class Rdfa2HtmlTest extends TestCase
                         [
                             'property' => 'dc:abstract',
                             'name' => 'description',
-                            'content' =>
-                            'Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.'
+                            'content'
+                            => 'Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.'
                         ]
                     )
                 ]
@@ -377,9 +372,9 @@ class Rdfa2HtmlTest extends TestCase
         return [
             [
                 [
-                    'dc:title' => 'Lorem ipsum',
-                    'http:cache-control' => 'public',
-                    'owl:versionInfo' => '1.42'
+                    [ 'dc:title', 'Lorem ipsum' ],
+                    [ 'http:cache-control', 'public' ],
+                    [ 'owl:versionInfo', '1.42' ]
                 ],
                 [
                     'xmlns:dc' => DcTitle::PROP_NS_NAME,

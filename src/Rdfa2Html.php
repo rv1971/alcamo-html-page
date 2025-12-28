@@ -8,13 +8,10 @@ use alcamo\rdfa\{
     DcFormat,
     DcSource,
     DcTitle,
-    MetaCharset,
     Node,
     RdfaData,
-    RelContents,
-    RelHome,
-    RelUp,
-    StmtInterface
+    StmtInterface,
+    XhvMetaStmt
 };
 use alcamo\html_creation\Element;
 use alcamo\html_creation\element\{A, Link, Meta, Title};
@@ -30,9 +27,9 @@ class Rdfa2html
     public const PROP_URI_TO_HTML_REL = [
         DcCreator::PROP_URI   => 'author',
         DcSource::PROP_URI    => 'canonical',
-        RelContents::PROP_URI => 'contents',
-        RelHome::PROP_URI     => 'home',
-        RelUp::PROP_URI       => 'up'
+        XhvMetaStmt::PROP_NS_NAME . 'contents' => 'contents',
+        XhvMetaStmt::PROP_NS_NAME . 'home' => 'home',
+        XhvMetaStmt::PROP_NS_NAME . 'up' => 'up',
     ];
 
     /**
@@ -55,11 +52,6 @@ class Rdfa2html
 
             case DcTitle::PROP_URI:
                 return new Title((string)$stmt, $attrs);
-
-            case MetaCharset::PROP_URI:
-                $attrs['charset'] = (string)$stmt;
-
-                return new Meta($attrs);
 
             default:
                 $metaName = static::PROP_URI_TO_META_NAME[$uri] ?? null;
@@ -111,11 +103,13 @@ class Rdfa2html
             }
 
             if (isset($rdfaData['dc:language'])) {
-                $attrs['hreflang'] = (string)$rdfaData['dc:language'];
+                $attrs['hreflang'] =
+                    (string)array_values($rdfaData['dc:language'])[0];
             }
 
             if (isset($rdfaData['dc:title'])) {
-                $attrs['title'] = (string)$rdfaData['dc:title'];
+                $attrs['title'] =
+                    (string)array_values($rdfaData['dc:title'])[0];
             }
         }
 
@@ -154,11 +148,13 @@ class Rdfa2html
             }
 
             if (isset($rdfaData['dc:language'])) {
-                $attrs['hreflang'] = (string)$rdfaData['dc:language'];
+                $attrs['hreflang'] =
+                    (string)array_values($rdfaData['dc:language'])[0];
             }
 
             if (isset($rdfaData['dc:title'])) {
-                $title = (string)$rdfaData['dc:title'];
+                $title =
+                    (string)array_values($rdfaData['dc:title'])[0];
             }
         }
 
@@ -169,21 +165,14 @@ class Rdfa2html
     {
         $htmlNodes = [];
 
-        /** Process `meta:charset` first, if present. */
-        if (isset($rdfaData['meta:charset'])) {
-            $htmlNodes[] = $this->stmt2Meta($rdfaData['meta:charset']);
-        }
-
         foreach ($rdfaData as $stmts) {
             foreach (is_array($stmts) ? $stmts : [ $stmts ] as $stmt) {
-                if ($stmt->getPropUri() != MetaCharset::PROP_URI) {
-                    $element = $stmt->getObject() instanceof Node
-                        ? $this->stmt2Link($stmt)
-                        : $this->stmt2Meta($stmt);
+                $element = $stmt->getObject() instanceof Node
+                    ? $this->stmt2Link($stmt)
+                    : $this->stmt2Meta($stmt);
 
-                    if (isset($element)) {
-                        $htmlNodes[] = $element;
-                    }
+                if (isset($element)) {
+                    $htmlNodes[] = $element;
                 }
             }
         }

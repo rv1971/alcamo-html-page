@@ -18,7 +18,7 @@ class FooModule
 
 class FactoryTest extends TestCase
 {
-    public function testConstruct()
+    public function testConstruct(): void
     {
         $pageFactory = new PageFactory(
             new ResourceFactory(

@@ -7,7 +7,7 @@
         "php": "7.3 - 8.0",
         "alcamo/core": "^0.10",
         "alcamo/html-creation": "^0.9",
-        "alcamo/http": "^0.9"
+        "alcamo/http": "^0.10"
     },
     "autoload": {
 	"psr-4": {

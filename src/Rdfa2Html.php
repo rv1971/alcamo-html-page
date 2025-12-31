@@ -99,17 +99,15 @@ class Rdfa2html
 
         if (isset($rdfaData)) {
             if (isset($rdfaData['dc:format'])) {
-                $attrs['type'] = (string)$rdfaData['dc:format'];
+                $attrs['type'] = (string)$rdfaData['dc:format']->first();
             }
 
             if (isset($rdfaData['dc:language'])) {
-                $attrs['hreflang'] =
-                    (string)array_values($rdfaData['dc:language'])[0];
+                $attrs['hreflang'] = (string)$rdfaData['dc:language']->first();
             }
 
             if (isset($rdfaData['dc:title'])) {
-                $attrs['title'] =
-                    (string)array_values($rdfaData['dc:title'])[0];
+                $attrs['title'] = (string)$rdfaData['dc:title']->first();
             }
         }
 
@@ -144,17 +142,15 @@ class Rdfa2html
 
         if (isset($rdfaData)) {
             if (isset($rdfaData['dc:format'])) {
-                $attrs['type'] = (string)$rdfaData['dc:format'];
+                $attrs['type'] = (string)$rdfaData['dc:format']->first();
             }
 
             if (isset($rdfaData['dc:language'])) {
-                $attrs['hreflang'] =
-                    (string)array_values($rdfaData['dc:language'])[0];
+                $attrs['hreflang'] = (string)$rdfaData['dc:language']->first();
             }
 
             if (isset($rdfaData['dc:title'])) {
-                $title =
-                    (string)array_values($rdfaData['dc:title'])[0];
+                $title = (string)$rdfaData['dc:title']->first();
             }
         }
 
@@ -166,7 +162,7 @@ class Rdfa2html
         $htmlNodes = [];
 
         foreach ($rdfaData as $stmts) {
-            foreach (is_array($stmts) ? $stmts : [ $stmts ] as $stmt) {
+            foreach ($stmts as $stmt) {
                 $element = $stmt->getObject() instanceof Node
                     ? $this->stmt2Link($stmt)
                     : $this->stmt2Meta($stmt);

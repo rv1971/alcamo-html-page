@@ -3,6 +3,7 @@
 namespace alcamo\html_page;
 
 use SebastianBergmann\Exporter\Exporter;
+use alcamo\exception\ExceptionInterface;
 use alcamo\html_creation\element\{B, P, Ul};
 use alcamo\modular_class\ModularClassTrait;
 use alcamo\rdfa\RdfaData;
@@ -111,6 +112,12 @@ class Factory implements \Countable, \Iterator, \ArrayAccess
             }
 
             $props[] = [ "$key = ", $displayValue ];
+        }
+
+        if ($e instanceof ExceptionInterface) {
+            foreach ($e->getMessageContext() as $key => $value) {
+                $props[] = [ "$key = ", $value ];
+            }
         }
 
         if ($props) {

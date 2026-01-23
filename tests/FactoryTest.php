@@ -109,7 +109,7 @@ class FactoryTest extends TestCase
                     $jsPath,
                     [ $jsonPath, 'manifest' ]
                 ],
-                new Nodes(new Comment('consetetur sadipscing elitr')),
+                new Nodes(new Comment(' consetetur sadipscing elitr ')),
                 '<!DOCTYPE html>'
                 . '<html xmlns="http://www.w3.org/1999/xhtml" '
                 . 'xmlns:dc="http://purl.org/dc/terms/" '
@@ -119,8 +119,8 @@ class FactoryTest extends TestCase
                 . '<meta property="dc:identifier" content="baz.qux"/>'
                 . '<meta property="dc:language" content="en-UG"/>'
                 . '<meta property="owl:versionInfo" content="42.43.44"/>'
-                . "<link rel=\"stylesheet\" href=\"/alcamo.css.gz?m=$mCssGz\"/>"
-                . "<script src=\"/alcamo.js.gz?m=$mJsGz\"></script>"
+                . "<link href=\"/alcamo.css.gz?m=$mCssGz\" rel=\"stylesheet\"/>"
+                . "<script src=\"/alcamo.js.gz?m=$mJsGz\" type=\"application/javascript\"/>"
                 . "<link type=\"application/json\" rel=\"manifest\" href=\"/alcamo.json?m=$mJson\"/>"
                 . '<!-- consetetur sadipscing elitr -->'
                 . '</head>'

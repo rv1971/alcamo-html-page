@@ -121,7 +121,7 @@ class Factory implements \Countable, \Iterator, \ArrayAccess
         }
 
         if ($props) {
-            $result[] = new Ul($props);
+            $result[] = Ul::newFromItems($props);
         }
 
         foreach ($e->getTrace() as $item) {

@@ -82,14 +82,14 @@ class ResourceFactoryTest extends TestCase
                     Icon::class,
                     Icon::class
                 ],
-                "<link rel=\"stylesheet\" href=\"/test/alcamo.css?m=$mCss\"/>"
+                "<link href=\"/test/alcamo.css?m=$mCss\" rel=\"stylesheet\"/>"
                 . "<link type=\"application/json\" rel=\"manifest\" href=\"/test/alcamo.json?m=$mJson\"/>"
-                . "<script src=\"/test/alcamo.js?m=$mJs\"></script>"
-                . "<script src=\"/test/alcamo.mjs?m=$mMjs\" type=\"module\"></script>"
-                . "<link type=\"image/png\" sizes=\"16x16\" rel=\"icon\" "
-                . "href=\"/test/alcamo-16.png?m=$mPng16\"/>"
-                . "<link type=\"image/svg+xml\" sizes=\"any\" rel=\"icon\" "
-                . "href=\"/test/alcamo.svg?m=$mSvg\"/>"
+                . "<script src=\"/test/alcamo.js?m=$mJs\" type=\"application/javascript\"/>"
+                . "<script src=\"/test/alcamo.mjs?m=$mMjs\" type=\"module\"/>"
+                . "<link type=\"image/png\" sizes=\"16x16\" "
+                . "href=\"/test/alcamo-16.png?m=$mPng16\" rel=\"icon\"/>"
+                . "<link type=\"image/svg+xml\" sizes=\"any\" "
+                . "href=\"/test/alcamo.svg?m=$mSvg\" rel=\"icon\"/>"
             ],
             'gz-with-attrs' => [
                 new DirMapUrlFactory(__DIR__, '/test/'),
@@ -107,14 +107,14 @@ class ResourceFactoryTest extends TestCase
                     Icon::class,
                     Icon::class
                 ],
-                "<script src=\"/test/alcamo.js.gz?m=$mJsGz\" id=\"JS\"></script>"
-                . "<link rel=\"stylesheet\" href=\"/test/alcamo.css.gz?m=$mCssGz\"/>"
+                "<script src=\"/test/alcamo.js.gz?m=$mJsGz\" type=\"application/javascript\" id=\"JS\"/>"
+                . "<link href=\"/test/alcamo.css.gz?m=$mCssGz\" rel=\"stylesheet\"/>"
                 . "<link type=\"application/json\" rel=\"dc:relation\" "
                 . "href=\"/test/alcamo.json?m=$mJson\"/>"
-                . "<link type=\"image/png\" sizes=\"16x16\" rel=\"icon\" "
-                . "href=\"/test/alcamo-16.png?m=$mPng16\"/>"
-                . "<link type=\"image/svg+xml\" sizes=\"any\" rel=\"icon\" "
-                . "href=\"/test/alcamo.svgz?m=$mSvgz\"/>"
+                . "<link type=\"image/png\" sizes=\"16x16\" "
+                . "href=\"/test/alcamo-16.png?m=$mPng16\" rel=\"icon\"/>"
+                . "<link type=\"image/svg+xml\" sizes=\"any\" "
+                . "href=\"/test/alcamo.svgz?m=$mSvgz\" rel=\"icon\"/>"
             ]
         ];
     }

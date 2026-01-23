@@ -179,7 +179,7 @@ class PageFactory
     {
         return
             (new Body())->createClosingTag()
-            . (new Comment(sprintf("Served in %.6fs", $this->elapsed())))
+            . (new Comment(sprintf(" Served in %.6fs ", $this->elapsed())))
             . (new Html())->createClosingTag();
     }
 }

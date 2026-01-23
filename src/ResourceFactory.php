@@ -102,7 +102,11 @@ class ResourceFactory
                 case is_array($item):
                     $nodes[] = $this->createElementFromPath(
                         $item[0],
-                        is_array($item[1]) ? $item[1] : [ 'rel' => $item[1] ]
+                        isset($item[1])
+                            ? (is_array($item[1])
+                               ? $item[1]
+                               : [ 'rel' => $item[1] ])
+                            : null
                     );
 
                     break;

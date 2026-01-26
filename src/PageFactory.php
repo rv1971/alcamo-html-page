@@ -3,6 +3,7 @@
 namespace alcamo\html_page;
 
 use alcamo\modular_class\ModuleTrait;
+use alcamo\html_creation\Rdfa2Html;
 use alcamo\html_creation\element\{Body, Head, Html};
 use alcamo\xml_creation\{Comment, DoctypeDecl, Nodes};
 
@@ -77,7 +78,7 @@ class PageFactory
          * - @ref DEFAULT_HTML_ATTRS
          */
         $attrs = static::DEFAULT_HTML_ATTRS
-            + $this->rdfa2Html_->rdfaData2NsAttrs($rdfaData);
+            + $this->rdfa2Html_->createNsAttrMapFromRdfaData($rdfaData);
 
         /** - `id` from `dc:identifier` if present in the RDFa data. */
         if (isset($rdfaData['dc:identifier'])) {
@@ -115,7 +116,9 @@ class PageFactory
         ?array $attrs = null
     ): Head {
         /** - HTML nodes created from the RDFa data. */
-        $content = [ $this->rdfa2Html_->rdfaData2Html($this->getRdfaData()) ];
+        $content = [
+            $this->rdfa2Html_->createHtmlFromRdfaData($this->getRdfaData())
+        ];
 
         /** - HTML nodes created from $resources */
         if (isset($resources)) {

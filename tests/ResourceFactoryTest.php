@@ -84,8 +84,8 @@ class ResourceFactoryTest extends TestCase
                 ],
                 "<link href=\"/test/alcamo.css?m=$mCss\" rel=\"stylesheet\"/>"
                 . "<link type=\"application/json\" rel=\"manifest\" href=\"/test/alcamo.json?m=$mJson\"/>"
-                . "<script src=\"/test/alcamo.js?m=$mJs\" type=\"application/javascript\"/>"
-                . "<script src=\"/test/alcamo.mjs?m=$mMjs\" type=\"module\"/>"
+                . "<script src=\"/test/alcamo.js?m=$mJs\" type=\"application/javascript\"></script>"
+                . "<script src=\"/test/alcamo.mjs?m=$mMjs\" type=\"module\"></script>"
                 . "<link type=\"image/png\" sizes=\"16x16\" "
                 . "href=\"/test/alcamo-16.png?m=$mPng16\" rel=\"icon\"/>"
                 . "<link type=\"image/svg+xml\" sizes=\"any\" "
@@ -107,7 +107,7 @@ class ResourceFactoryTest extends TestCase
                     Icon::class,
                     Icon::class
                 ],
-                "<script src=\"/test/alcamo.js.gz?m=$mJsGz\" type=\"application/javascript\" id=\"JS\"/>"
+                "<script src=\"/test/alcamo.js.gz?m=$mJsGz\" type=\"application/javascript\" id=\"JS\"></script>"
                 . "<link href=\"/test/alcamo.css.gz?m=$mCssGz\" rel=\"stylesheet\"/>"
                 . "<link type=\"application/json\" rel=\"dc:relation\" "
                 . "href=\"/test/alcamo.json?m=$mJson\"/>"

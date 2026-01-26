@@ -120,7 +120,7 @@ class FactoryTest extends TestCase
                 . '<meta property="dc:language" content="en-UG"/>'
                 . '<meta property="owl:versionInfo" content="42.43.44"/>'
                 . "<link href=\"/alcamo.css.gz?m=$mCssGz\" rel=\"stylesheet\"/>"
-                . "<script src=\"/alcamo.js.gz?m=$mJsGz\" type=\"application/javascript\"/>"
+                . "<script src=\"/alcamo.js.gz?m=$mJsGz\" type=\"application/javascript\"></script>"
                 . "<link type=\"application/json\" rel=\"manifest\" href=\"/alcamo.json?m=$mJson\"/>"
                 . '<!-- consetetur sadipscing elitr -->'
                 . '</head>'

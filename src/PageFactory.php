@@ -3,7 +3,7 @@
 namespace alcamo\html_page;
 
 use alcamo\modular_class\ModuleTrait;
-use alcamo\html_creation\Rdfa2Html;
+use alcamo\html_creation\{Rdfa2Html, ResourceLinkFactory};
 use alcamo\html_creation\element\{Body, Head, Html};
 use alcamo\xml_creation\{Comment, DoctypeDecl, Nodes};
 
@@ -30,30 +30,31 @@ class PageFactory
     /// Default attributes for the \<body> element
     public const DEFAULT_BODY_ATTRS = [];
 
-    private $created_;         ///< Microtime of creation of this object
-    private $resourceFactory_; ///< ResourceFactory
-    private $rdfa2Html_;       ///< Rdfa2Html
+    private $created_;             ///< Microtime of creation of this object
+    private $resourceLinkFactory_; ///< ResourceLinkFactory
+    private $rdfa2Html_;           ///< Rdfa2Html
 
-    public function __construct(?ResourceFactory $resourceFactory = null)
-    {
+    public function __construct(
+        ?ResourceLinkFactory $resourceLinkFactory = null
+    ) {
         $this->created_ = microtime(true);
-        $this->resourceFactory_ = $resourceFactory;
+        $this->resourceLinkFactory_ = $resourceLinkFactory;
         $this->rdfa2Html_ = new Rdfa2Html();
     }
 
-    public function getResourceFactory(): ?ResourceFactory
+    public function getResourceLinkFactory(): ?ResourceLinkFactory
     {
-        return $this->resourceFactory_;
+        return $this->resourceLinkFactory_;
     }
 
-    /// If no resource factory has been given, create a new ResourceFactory
+    /// If no resource factory has been given, create a new ResourceLinkFactory
     public function init(Factory $factory)
     {
         $this->moduleInit($factory);
 
-        if (!isset($this->resourceFactory_)) {
-            $this->resourceFactory_ =
-                new ResourceFactory($this->getUrlFactory());
+        if (!isset($this->resourceLinkFactory_)) {
+            $this->resourceLinkFactory_ =
+                new ResourceLinkFactory($this->getFileResourceFactory());
         }
     }
 
@@ -123,7 +124,7 @@ class PageFactory
         /** - HTML nodes created from $resources */
         if (isset($resources)) {
             $content[] =
-                $this->resourceFactory_->createElementsFromItems($resources);
+                $this->resourceLinkFactory_->createNodesFromItems($resources);
         }
 
         /** - Extra nodes, if any. */

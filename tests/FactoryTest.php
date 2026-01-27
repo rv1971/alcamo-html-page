@@ -4,7 +4,7 @@ namespace alcamo\html_page;
 
 use PHPUnit\Framework\TestCase;
 use alcamo\modular_class\ModuleTrait;
-use alcamo\url_creation\DirMapUrlFactory;
+use alcamo\html_creation\{ResourceLinkFactory, SimpleFileResourceFactory};
 use alcamo\xml_creation\{Comment, Nodes};
 
 class FooModule
@@ -21,18 +21,21 @@ class FactoryTest extends TestCase
     public function testConstruct(): void
     {
         $pageFactory = new PageFactory(
-            new ResourceFactory(
-                new DirMapUrlFactory(__DIR__, '/content')
+            new ResourceLinkFactory(
+                new SimpleFileResourceFactory(__DIR__, '/content', true)
             )
         );
 
         $factory = new Factory(
             null,
             [ new FooModule(), $pageFactory ],
-            new DirMapUrlFactory(__DIR__, 'foo-bar')
+            new SimpleFileResourceFactory(__DIR__, 'foo-bar', true)
         );
 
-        $this->assertSame('foo-bar', $factory->getUrlFactory()->getHtdocsUrl());
+        $this->assertSame(
+            'foo-bar',
+            $factory->getFileResourceFactory()->getUriPrefix()
+        );
 
         $this->assertSame(
             'ut labore et dolore magna aliquyam erat',
@@ -41,8 +44,8 @@ class FactoryTest extends TestCase
 
         $this->assertSame(
             '/content',
-            $factory['page']->getResourceFactory()->getUrlFactory()
-                ->getHtdocsUrl()
+            $factory['page']->getResourceLinkFactory()->getFileResourceFactory()
+                ->getUriPrefix()
         );
     }
 
@@ -51,12 +54,13 @@ class FactoryTest extends TestCase
      */
     public function testHtmlGeneration(
         $rdfaData,
-        $urlFactory,
+        $fileResourceFactory,
         $resources,
         $extraHeadNodes,
         $expectedHtml
     ) {
-        $factory = Factory::newFromRdfaData($rdfaData, null, $urlFactory);
+        $factory =
+            Factory::newFromRdfaData($rdfaData, null, $fileResourceFactory);
 
         $html = $factory['page']->createBegin($resources, $extraHeadNodes)
             . 'Lorem ipsum.'
@@ -103,11 +107,11 @@ class FactoryTest extends TestCase
                     [ 'dc:language', 'en-UG' ],
                     [ 'owl:versionInfo', '42.43.44' ]
                 ],
-                new DirMapUrlFactory(__DIR__, '/'),
+                new SimpleFileResourceFactory(__DIR__, '/', true),
                 [
-                    $cssPath,
-                    $jsPath,
-                    [ $jsonPath, 'manifest' ]
+                    'alcamo.css',
+                    'alcamo.js',
+                    [ 'alcamo.json', 'manifest' ]
                 ],
                 new Nodes(new Comment(' consetetur sadipscing elitr ')),
                 '<!DOCTYPE html>'
@@ -120,8 +124,8 @@ class FactoryTest extends TestCase
                 . '<meta property="dc:language" content="en-UG"/>'
                 . '<meta property="owl:versionInfo" content="42.43.44"/>'
                 . "<link href=\"/alcamo.css.gz?m=$mCssGz\" rel=\"stylesheet\"/>"
-                . "<script src=\"/alcamo.js.gz?m=$mJsGz\" type=\"application/javascript\"></script>"
-                . "<link type=\"application/json\" rel=\"manifest\" href=\"/alcamo.json?m=$mJson\"/>"
+                . "<script src=\"/alcamo.js.gz?m=$mJsGz\"></script>"
+                . "<link rel=\"manifest\" type=\"application/json\" href=\"/alcamo.json?m=$mJson\"/>"
                 . '<!-- consetetur sadipscing elitr -->'
                 . '</head>'
                 . '<body>Lorem ipsum.</body>'
@@ -183,14 +187,14 @@ class FactoryTest extends TestCase
             'simple' => [
                 $factory,
                 $eSimple,
-                '<p><b>' . \Exception::class . '</b> at ' . __FILE__ . ':154</p>'
+                '<p><b>' . \Exception::class . '</b> at ' . __FILE__ . ':158</p>'
                 . '<p><b>Lorem ipsum</b></p>'
-                . '<p>alcamo\html_page\{closure}() in ' . __FILE__ . ':155</p>'
+                . '<p>alcamo\html_page\{closure}() in ' . __FILE__ . ':159</p>'
             ],
             'with-props' => [
                 $factory,
                 $eWithProps,
-                '<p><b>' . \LogicException::class . '</b> at ' . __FILE__ . ':157</p>'
+                '<p><b>' . \LogicException::class . '</b> at ' . __FILE__ . ':161</p>'
                 . '<p><b>consetetur sadipscing elitr</b></p>'
                 . '<ul><li>intValue = 42</li>'
                 . "<li>stringValue = 'foo'</li></ul>"
@@ -199,7 +203,7 @@ class FactoryTest extends TestCase
             'with-html-element-prop' => [
                 $factory,
                 $eWithHtmlElemProp,
-                '<p><b>' . \UnexpectedValueException::class . '</b> at ' . __FILE__ . ':169</p>'
+                '<p><b>' . \UnexpectedValueException::class . '</b> at ' . __FILE__ . ':173</p>'
                 . '<p><b>tempor invidunt</b></p>'
                 . '<ul><li>extraMessage = <b>ut labore et dolore magna</b></li></ul>'
                 . '<p>renderThrowableProvider()</p>'
@@ -207,7 +211,7 @@ class FactoryTest extends TestCase
             'with-dom-node-prop' => [
                 $factory,
                 $eWithDomNodeProp,
-                '<p><b>' . \UnexpectedValueException::class . '</b> at ' . __FILE__ . ':179</p>'
+                '<p><b>' . \UnexpectedValueException::class . '</b> at ' . __FILE__ . ':183</p>'
                 . '<p><b>sed diam nonumy eirmod</b></p>'
                 . '<ul><li>inData = &lt;bar baz="qux"/&gt;</li></ul>'
                 . '<p>renderThrowableProvider()</p>'

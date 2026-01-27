@@ -4,14 +4,13 @@ namespace alcamo\html_page;
 
 use SebastianBergmann\Exporter\Exporter;
 use alcamo\exception\ExceptionInterface;
+use alcamo\html_creation\{
+    FileResourceFactoryInterface,
+    SimpleFileResourceFactory
+};
 use alcamo\html_creation\element\{B, P, Ul};
 use alcamo\modular_class\ModularClassTrait;
 use alcamo\rdfa\RdfaData;
-use alcamo\url_creation\{
-    HasUrlFactoryTrait,
-    TrivialUrlFactory,
-    UrlFactoryInterface
-};
 use alcamo\xml_creation\{Nodes, Raw};
 
 /**
@@ -22,7 +21,6 @@ use alcamo\xml_creation\{Nodes, Raw};
  */
 class Factory implements \Countable, \Iterator, \ArrayAccess
 {
-    use HasUrlFactoryTrait;
     use ModularClassTrait;
 
     /// Create XHTML by default
@@ -30,24 +28,25 @@ class Factory implements \Countable, \Iterator, \ArrayAccess
         'dc:format' => 'application/xhtml+xml; charset="UTF-8"'
     ];
 
-    private $rdfaData_; ///< RdfaData
+    private $rdfaData_;            ///< RdfaData
+    private $fileResourceFactory_; ///< FileResourceFactoryInterface
 
     public static function newFromRdfaData(
         iterable $rdfaData,
         ?array $modules = null,
-        ?UrlFactoryInterface $urlFactory = null
+        ?FileResourceFactoryInterface $fileResourceFactory = null
     ) {
         return new static(
             RdfaData::newfromIterable($rdfaData),
             $modules,
-            $urlFactory
+            $fileResourceFactory
         );
     }
 
     public function __construct(
         ?RdfaData $rdfaData = null,
         ?array $modules = null,
-        ?UrlFactoryInterface $urlFactory = null
+        ?FileResourceFactoryInterface $fileResourceFactory = null
     ) {
         $this->rdfaData_ = RdfaData::newFromIterable(static::DEFAULT_RDFA_DATA);
 
@@ -55,9 +54,10 @@ class Factory implements \Countable, \Iterator, \ArrayAccess
             $this->rdfaData_ = $this->rdfaData_->replace($rdfaData);
         }
 
-        /** If no $urlFactory is given, create an insatnce of
-         *  alcamo::url_creation::TrivialUrlFactory. */
-        $this->urlFactory_ = $urlFactory ?? new TrivialUrlFactory();
+        /** If no $fileResourceFactory is given, create an instance of
+         *  alcamo::html_creation::SimpleFileResourceFactory. */
+        $this->fileResourceFactory_ =
+            $fileResourceFactory ?? new SimpleFileResourceFactory();
 
         if (isset($modules)) {
             $this->addModules($modules);
@@ -73,6 +73,11 @@ class Factory implements \Countable, \Iterator, \ArrayAccess
     public function getRdfaData(): RdfaData
     {
         return $this->rdfaData_;
+    }
+
+    public function getFileResourceFactory(): FileResourceFactoryInterface
+    {
+        return $this->fileResourceFactory_;
     }
 
     public function setRdfaData(RdfaData $rdfaData): void

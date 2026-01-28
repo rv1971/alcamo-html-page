@@ -3,25 +3,25 @@
 namespace alcamo\html_page;
 
 use SebastianBergmann\Exporter\Exporter;
+use alcamo\decorator\MultiDecoratedArrayAccessTrait;
 use alcamo\exception\ExceptionInterface;
 use alcamo\html_creation\{
     FileResourceFactoryInterface,
     SimpleFileResourceFactory
 };
 use alcamo\html_creation\element\{B, P, Ul};
-use alcamo\modular_class\ModularClassTrait;
 use alcamo\rdfa\RdfaData;
 use alcamo\xml_creation\{Nodes, Raw};
 
 /**
  * @brief Factory for HTML code
  *
- * Implemented as a modular class using
- * alcamo::modular_class::ModularClassTrait.
+ * Using alcamo::decorator::MultiDecoratedArrayAccessTrait, it is possble to
+ * add decorators creating HTML code for specific uses.
  */
-class Factory implements \Countable, \Iterator, \ArrayAccess
+class Factory implements \ArrayAccess
 {
-    use ModularClassTrait;
+    use MultiDecoratedArrayAccessTrait;
 
     /// Create XHTML by default
     public const DEFAULT_RDFA_DATA = [
@@ -33,19 +33,19 @@ class Factory implements \Countable, \Iterator, \ArrayAccess
 
     public static function newFromRdfaData(
         iterable $rdfaData,
-        ?array $modules = null,
+        ?array $decorators = null,
         ?FileResourceFactoryInterface $fileResourceFactory = null
     ) {
         return new static(
             RdfaData::newfromIterable($rdfaData),
-            $modules,
+            $decorators,
             $fileResourceFactory
         );
     }
 
     public function __construct(
         ?RdfaData $rdfaData = null,
-        ?array $modules = null,
+        ?array $decorators = null,
         ?FileResourceFactoryInterface $fileResourceFactory = null
     ) {
         $this->rdfaData_ = RdfaData::newFromIterable(static::DEFAULT_RDFA_DATA);
@@ -59,14 +59,14 @@ class Factory implements \Countable, \Iterator, \ArrayAccess
         $this->fileResourceFactory_ =
             $fileResourceFactory ?? new SimpleFileResourceFactory();
 
-        if (isset($modules)) {
-            $this->addModules($modules);
+        if (isset($decorators)) {
+            $this->addDecorators($decorators);
         }
 
-        /** If no `page` module is given, add a new instance of
+        /** If no `page` decorator is given, add a new instance of
          *  PageFactory. */
-        if (!isset($this['page'])) {
-            $this->addModule(new PageFactory());
+        if (!isset($this[PageFactory::class])) {
+            $this->addDecorator(new PageFactory());
         }
     }
 

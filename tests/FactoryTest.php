@@ -3,14 +3,12 @@
 namespace alcamo\html_page;
 
 use PHPUnit\Framework\TestCase;
-use alcamo\modular_class\ModuleTrait;
+use alcamo\decorator\Decorator;
 use alcamo\html_creation\{ResourceLinkFactory, SimpleFileResourceFactory};
 use alcamo\xml_creation\{Comment, Nodes};
 
-class FooModule
+class FooFactory extends Decorator
 {
-    use ModuleTrait;
-
     public const NAME = 'foo';
 
     public $text = 'ut labore et dolore magna aliquyam erat';
@@ -28,7 +26,7 @@ class FactoryTest extends TestCase
 
         $factory = new Factory(
             null,
-            [ new FooModule(), $pageFactory ],
+            [ new FooFactory(), $pageFactory ],
             new SimpleFileResourceFactory(__DIR__, 'foo-bar', true)
         );
 
@@ -39,12 +37,13 @@ class FactoryTest extends TestCase
 
         $this->assertSame(
             'ut labore et dolore magna aliquyam erat',
-            $factory['foo']->text
+            $factory[FooFactory::class]->text
         );
 
         $this->assertSame(
             '/content',
-            $factory['page']->getResourceLinkFactory()->getFileResourceFactory()
+            $factory[PageFactory::class]->getResourceLinkFactory()
+                ->getFileResourceFactory()
                 ->getUriPrefix()
         );
     }
@@ -62,9 +61,10 @@ class FactoryTest extends TestCase
         $factory =
             Factory::newFromRdfaData($rdfaData, null, $fileResourceFactory);
 
-        $html = $factory['page']->createBegin($resources, $extraHeadNodes)
+        $html = $factory[PageFactory::class]
+        ->createBegin($resources, $extraHeadNodes)
             . 'Lorem ipsum.'
-            . $factory['page']->createEnd();
+            . $factory[PageFactory::class]->createEnd();
 
         $maskedHtml = preg_replace('/\\.\\d{6}s -->/', '.123456s -->', $html);
 

@@ -44,9 +44,9 @@ class PageTest extends TestCase
 
         $page->end(true);
 
-        $expectedText = $factory['page']->createBegin()
+        $expectedText = $factory[PageFactory::class]->createBegin()
             . $bodyText
-            . $factory['page']->createEnd();
+            . $factory[PageFactory::class]->createEnd();
 
         $this->assertSame(
             preg_replace('/\\.\\d{6}s -->/', '.123456s -->', $expectedText),

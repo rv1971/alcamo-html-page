@@ -83,7 +83,7 @@ class Page
         ?array $bodyAttrs = null
     ): void {
         $this->body_->write(
-            $this->htmlFactory_['page']
+            $this->htmlFactory_[PageFactory::class]
                 ->createBegin($resources, $extraHeadNodes, $bodyAttrs)
         );
     }
@@ -96,7 +96,9 @@ class Page
      */
     public function end(?bool $delayEmission = null): void
     {
-        $this->body_->write($this->htmlFactory_['page']->createEnd());
+        $this->body_->write(
+            $this->htmlFactory_[PageFactory::class]->createEnd()
+        );
 
         if (!$delayEmission) {
             $this->createResponse()->emit();

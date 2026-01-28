@@ -2,7 +2,7 @@
 
 namespace alcamo\html_page;
 
-use alcamo\modular_class\ModuleTrait;
+use alcamo\decorator\DecoratorTrait;
 use alcamo\html_creation\{Rdfa2Html, ResourceLinkFactory};
 use alcamo\html_creation\element\{Body, Head, Html};
 use alcamo\xml_creation\{Comment, DoctypeDecl, Nodes};
@@ -12,12 +12,9 @@ use alcamo\xml_creation\{Comment, DoctypeDecl, Nodes};
  */
 class PageFactory
 {
-    use ModuleTrait {
-        init as moduleInit;
+    use DecoratorTrait {
+        setHandler as decoratorSetHandler;
     }
-
-    /// Module name
-    public const NAME = 'page';
 
     /// Default attributes for the \<html> element
     public const DEFAULT_HTML_ATTRS = [
@@ -54,9 +51,9 @@ class PageFactory
     }
 
     /// If no resource factory has been given, create a new ResourceLinkFactory
-    public function init(Factory $factory)
+    public function setHandler(Factory $factory)
     {
-        $this->moduleInit($factory);
+        $this->decoratorSetHandler($factory);
 
         if (!isset($this->resourceLinkFactory_)) {
             $this->resourceLinkFactory_ =

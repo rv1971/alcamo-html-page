@@ -5,7 +5,7 @@
     "license": "Apache-2.0",
     "require": {
         "php": "7.3 - 8.0",
-        "alcamo/core": "0.10 - 0.12",
+        "alcamo/decorator": "^0.1",
         "alcamo/html-creation": "^0.11",
         "alcamo/http": "0.10 - 0.12"
     },

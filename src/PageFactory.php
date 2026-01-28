@@ -35,16 +35,22 @@ class PageFactory
     private $rdfa2Html_;           ///< Rdfa2Html
 
     public function __construct(
-        ?ResourceLinkFactory $resourceLinkFactory = null
+        ?ResourceLinkFactory $resourceLinkFactory = null,
+        ?Rdfa2Html $rdfa2Html = null
     ) {
         $this->created_ = microtime(true);
         $this->resourceLinkFactory_ = $resourceLinkFactory;
-        $this->rdfa2Html_ = new Rdfa2Html();
+        $this->rdfa2Html_ = $rdfa2Html ?? new Rdfa2Html();
     }
 
     public function getResourceLinkFactory(): ?ResourceLinkFactory
     {
         return $this->resourceLinkFactory_;
+    }
+
+    public function getRdfa2Html(): Rdfa2Html
+    {
+        return $this->rdfa2Html_;
     }
 
     /// If no resource factory has been given, create a new ResourceLinkFactory

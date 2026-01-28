@@ -22,19 +22,6 @@ class PageFactory extends Decorator
     /// Default attributes for the \<body> element
     public const DEFAULT_BODY_ATTRS = [];
 
-    private $created_;             ///< Microtime of creation of this object
-
-    public function __construct(
-    ) {
-        $this->created_ = microtime(true);
-    }
-
-    /// Return seconds elapsed since creation.
-    public function elapsed(): float
-    {
-        return microtime(true) - $this->created_;
-    }
-
     public function createDoctypeDecl($intSubset = null): DoctypeDecl
     {
         return new DoctypeDecl('html', null, $intSubset);
@@ -154,7 +141,9 @@ class PageFactory extends Decorator
     {
         return
             (new Body())->createClosingTag()
-            . (new Comment(sprintf(" Served in %.6fs ", $this->elapsed())))
+            . (new Comment(
+                sprintf(" Served in %.6fs ", $this->getElapsedSeconds())
+            ))
             . (new Html())->createClosingTag();
     }
 }

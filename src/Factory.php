@@ -36,6 +36,7 @@ class Factory implements \ArrayAccess
         'dc:format' => 'application/xhtml+xml; charset="UTF-8"'
     ];
 
+    private $created_;             ///< Microtime of creation of this object
     private $rdfaData_;            ///< RdfaData
     private $resourceLinkFactory_; ///< ResourceLinkFactory
     private $rdfa2Html_;           ///< Rdfa2Html
@@ -56,6 +57,8 @@ class Factory implements \ArrayAccess
         $resourceFactory = null,
         ?Rdfa2Html $rdfa2Html = null
     ) {
+        $this->created_ = microtime(true);
+
         $this->rdfaData_ = RdfaData::newFromIterable(static::DEFAULT_RDFA_DATA);
 
         if (isset($rdfaData)) {
@@ -99,6 +102,12 @@ class Factory implements \ArrayAccess
         }
 
         $this->rdfa2Html_ = $rdfa2Html ?? new Rdfa2Html();
+    }
+
+    /// Seconds elapsed since object creation
+    public function getElapsedSeconds(): float
+    {
+        return microtime(true) - $this->created_;
     }
 
     public function getRdfaData(): RdfaData

@@ -7,12 +7,6 @@ use alcamo\http\Response;
 use alcamo\xml_creation\Nodes;
 
 /**
- * @namespace alcamo::html_page
- *
- * @brief Modular factory for HTML pages
- */
-
-/**
  * @brief HTML page consisting of an HTML factory and a PSR7 message body
  * stream
  *
@@ -26,7 +20,7 @@ class Page
 
     public function __construct(?Factory $htmlFactory = null)
     {
-        /** If $factory is not given, create an insatnce of Factory. */
+        /** If $factory is not given, create an instance of Factory. */
         $this->htmlFactory_ = $htmlFactory ?? new Factory();
 
         $this->body_ = new Stream('php://memory', 'wb+');

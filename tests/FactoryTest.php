@@ -18,11 +18,7 @@ class FactoryTest extends TestCase
 {
     public function testConstruct(): void
     {
-        $pageFactory = new PageFactory(
-            new ResourceLinkFactory(
-                new SimpleFileResourceFactory(__DIR__, '/content', true)
-            )
-        );
+        $pageFactory = new PageFactory();
 
         $factory = new Factory(
             null,
@@ -32,19 +28,12 @@ class FactoryTest extends TestCase
 
         $this->assertSame(
             'foo-bar',
-            $factory->getFileResourceFactory()->getUriPrefix()
+            $factory->getResourceLinkFactory()->getFileResourceFactory()->getUriPrefix()
         );
 
         $this->assertSame(
             'ut labore et dolore magna aliquyam erat',
             $factory[FooFactory::class]->text
-        );
-
-        $this->assertSame(
-            '/content',
-            $factory[PageFactory::class]->getResourceLinkFactory()
-                ->getFileResourceFactory()
-                ->getUriPrefix()
         );
     }
 
@@ -58,8 +47,7 @@ class FactoryTest extends TestCase
         $extraHeadNodes,
         $expectedHtml
     ) {
-        $factory =
-            Factory::newFromRdfaData($rdfaData, null, $fileResourceFactory);
+        $factory = new Factory($rdfaData, null, $fileResourceFactory);
 
         $html = $factory[PageFactory::class]
         ->createBegin($resources, $extraHeadNodes)

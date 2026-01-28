@@ -4,9 +4,10 @@ namespace alcamo\html_page;
 
 use SebastianBergmann\Exporter\Exporter;
 use alcamo\decorator\MultiDecoratedArrayAccessTrait;
-use alcamo\exception\ExceptionInterface;
+use alcamo\exception\{ExceptionInterface, InvalidType};
 use alcamo\html_creation\{
     FileResourceFactoryInterface,
+    ResourceLinkFactory,
     SimpleFileResourceFactory
 };
 use alcamo\html_creation\element\{B, P, Ul};
@@ -14,59 +15,84 @@ use alcamo\rdfa\RdfaData;
 use alcamo\xml_creation\{Nodes, Raw};
 
 /**
+ * @namespace alcamo::html_page
+ *
+ * @brief Modular factory for HTML pages
+ */
+
+/**
  * @brief Factory for HTML code
  *
  * Using alcamo::decorator::MultiDecoratedArrayAccessTrait, it is possble to
- * add decorators creating HTML code for specific uses.
+ * extend this class adding decorators.
  */
 class Factory implements \ArrayAccess
 {
     use MultiDecoratedArrayAccessTrait;
 
-    /// Create XHTML by default
+    /// Default RDFa data that may be overridden by explicit settings
     public const DEFAULT_RDFA_DATA = [
         'dc:format' => 'application/xhtml+xml; charset="UTF-8"'
     ];
 
     private $rdfaData_;            ///< RdfaData
-    private $fileResourceFactory_; ///< FileResourceFactoryInterface
+    private $resourceLinkFactory_; ///< ResourceLinkFactory
 
-    public static function newFromRdfaData(
-        iterable $rdfaData,
-        ?array $decorators = null,
-        ?FileResourceFactoryInterface $fileResourceFactory = null
-    ) {
-        return new static(
-            RdfaData::newfromIterable($rdfaData),
-            $decorators,
-            $fileResourceFactory
-        );
-    }
-
+    /**
+     * @param RdfaData|iterable RDFa data of the document.
+     *
+     * @param $decorators Further decorators to add.
+     *
+     * @param $resourceFactory ResourceLinkFactory|FileResourceFactoryInterface|null
+     * - If ResourceLinkFactory store it as-is.
+     * - If FileResourceFactoryInterface, create a ResourceLinkFactory from it.
+     * - If `null`, create a default ResourceLinkFactory
+     */
     public function __construct(
-        ?RdfaData $rdfaData = null,
+        $rdfaData = null,
         ?array $decorators = null,
-        ?FileResourceFactoryInterface $fileResourceFactory = null
+        $resourceFactory = null
     ) {
         $this->rdfaData_ = RdfaData::newFromIterable(static::DEFAULT_RDFA_DATA);
 
         if (isset($rdfaData)) {
-            $this->rdfaData_ = $this->rdfaData_->replace($rdfaData);
+            $this->rdfaData_ = $this->rdfaData_->replace(
+                $rdfaData instanceof RdfaData
+                    ? $rdfaData
+                    : RdfaData::newFromIterable($rdfaData)
+            );
         }
-
-        /** If no $fileResourceFactory is given, create an instance of
-         *  alcamo::html_creation::SimpleFileResourceFactory. */
-        $this->fileResourceFactory_ =
-            $fileResourceFactory ?? new SimpleFileResourceFactory();
 
         if (isset($decorators)) {
             $this->addDecorators($decorators);
         }
 
-        /** If no `page` decorator is given, add a new instance of
+        /** If no PageFactory decorator is given, add a new instance of
          *  PageFactory. */
         if (!isset($this[PageFactory::class])) {
             $this->addDecorator(new PageFactory());
+        }
+
+        switch (true) {
+            case !isset($resourceFactory):
+                $this->resourceLinkFactory_ = new ResourceLinkFactory();
+                break;
+
+            case $resourceFactory instanceof FileResourceFactoryInterface:
+              $this->resourceLinkFactory_ =
+                  new ResourceLinkFactory($resourceFactory);
+              break;
+
+            case $resourceFactory instanceof ResourceLinkFactory:
+                $this->resourceLinkFactory_ = $resourceFactory;
+                break;
+
+            default:
+                /** @throw alcamo::exception::InvalidType if $resourceFactory
+                 *  is not one of the supported types. */
+                throw (new InvalidType())->setMessageContext(
+                    [ 'value' => $resourceFactory ]
+                );
         }
     }
 
@@ -75,9 +101,9 @@ class Factory implements \ArrayAccess
         return $this->rdfaData_;
     }
 
-    public function getFileResourceFactory(): FileResourceFactoryInterface
+    public function getResourceLinkFactory(): ?ResourceLinkFactory
     {
-        return $this->fileResourceFactory_;
+        return $this->resourceLinkFactory_;
     }
 
     public function setRdfaData(RdfaData $rdfaData): void

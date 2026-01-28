@@ -7,6 +7,7 @@ use alcamo\decorator\MultiDecoratedArrayAccessTrait;
 use alcamo\exception\{ExceptionInterface, InvalidType};
 use alcamo\html_creation\{
     FileResourceFactoryInterface,
+    Rdfa2Html,
     ResourceLinkFactory,
     SimpleFileResourceFactory
 };
@@ -37,6 +38,7 @@ class Factory implements \ArrayAccess
 
     private $rdfaData_;            ///< RdfaData
     private $resourceLinkFactory_; ///< ResourceLinkFactory
+    private $rdfa2Html_;           ///< Rdfa2Html
 
     /**
      * @param RdfaData|iterable RDFa data of the document.
@@ -51,7 +53,8 @@ class Factory implements \ArrayAccess
     public function __construct(
         $rdfaData = null,
         ?array $decorators = null,
-        $resourceFactory = null
+        $resourceFactory = null,
+        ?Rdfa2Html $rdfa2Html = null
     ) {
         $this->rdfaData_ = RdfaData::newFromIterable(static::DEFAULT_RDFA_DATA);
 
@@ -94,6 +97,8 @@ class Factory implements \ArrayAccess
                     [ 'value' => $resourceFactory ]
                 );
         }
+
+        $this->rdfa2Html_ = $rdfa2Html ?? new Rdfa2Html();
     }
 
     public function getRdfaData(): RdfaData
@@ -104,6 +109,11 @@ class Factory implements \ArrayAccess
     public function getResourceLinkFactory(): ?ResourceLinkFactory
     {
         return $this->resourceLinkFactory_;
+    }
+
+    public function getRdfa2Html(): Rdfa2Html
+    {
+        return $this->rdfa2Html_;
     }
 
     public function setRdfaData(RdfaData $rdfaData): void

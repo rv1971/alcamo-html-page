@@ -3,7 +3,6 @@
 namespace alcamo\html_page;
 
 use alcamo\decorator\Decorator;
-use alcamo\html_creation\Rdfa2Html;
 use alcamo\html_creation\element\{Body, Head, Html};
 use alcamo\xml_creation\{Comment, DoctypeDecl, Nodes};
 
@@ -24,18 +23,10 @@ class PageFactory extends Decorator
     public const DEFAULT_BODY_ATTRS = [];
 
     private $created_;             ///< Microtime of creation of this object
-    private $rdfa2Html_;           ///< Rdfa2Html
 
     public function __construct(
-        ?Rdfa2Html $rdfa2Html = null
     ) {
         $this->created_ = microtime(true);
-        $this->rdfa2Html_ = $rdfa2Html ?? new Rdfa2Html();
-    }
-
-    public function getRdfa2Html(): Rdfa2Html
-    {
-        return $this->rdfa2Html_;
     }
 
     /// Return seconds elapsed since creation.
@@ -59,7 +50,7 @@ class PageFactory extends Decorator
          * - @ref DEFAULT_HTML_ATTRS
          */
         $attrs = static::DEFAULT_HTML_ATTRS
-            + $this->rdfa2Html_->createNsAttrMapFromRdfaData($rdfaData);
+            + $this->getRdfa2Html()->createNsAttrMapFromRdfaData($rdfaData);
 
         /** - `id` from `dc:identifier` if present in the RDFa data. */
         if (isset($rdfaData['dc:identifier'])) {
@@ -98,7 +89,7 @@ class PageFactory extends Decorator
     ): Head {
         /** - HTML nodes created from the RDFa data. */
         $content = [
-            $this->rdfa2Html_->createHtmlFromRdfaData($this->getRdfaData())
+            $this->getRdfa2Html()->createHtmlFromRdfaData($this->getRdfaData())
         ];
 
         /** - HTML nodes created from $resources */

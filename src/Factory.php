@@ -85,9 +85,9 @@ class Factory implements \ArrayAccess
                 break;
 
             case $resourceFactory instanceof FileResourceFactoryInterface:
-              $this->resourceLinkFactory_ =
-                  new ResourceLinkFactory($resourceFactory);
-              break;
+                $this->resourceLinkFactory_ =
+                    new ResourceLinkFactory($resourceFactory);
+                break;
 
             case $resourceFactory instanceof ResourceLinkFactory:
                 $this->resourceLinkFactory_ = $resourceFactory;
@@ -161,12 +161,12 @@ class Factory implements \ArrayAccess
                     $displayValue = $exporter->export($value);
             }
 
-            $props[] = [ "$key = ", $displayValue ];
+            $props[] = "$key = $displayValue";
         }
 
         if ($e instanceof ExceptionInterface) {
             foreach ($e->getMessageContext() as $key => $value) {
-                $props[] = [ "$key = ", $value ];
+                $props[] = "$key = $value";
             }
         }
 

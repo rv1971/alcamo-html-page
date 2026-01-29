@@ -81,13 +81,13 @@ class FactoryTest extends TestCase
                 null,
                 '<!DOCTYPE html>'
                 . '<html xmlns="http://www.w3.org/1999/xhtml" '
-                . 'xmlns:dc="http://purl.org/dc/terms/">'
-                . '<head>'
-                . '<title property="dc:title">Foo | Bar</title>'
-                . '</head>'
-                . '<body>Lorem ipsum.</body>'
-                . '<!-- Served in 0.123456s -->'
-                . '</html>'
+                    . 'xmlns:dc="http://purl.org/dc/terms/">'
+                    . '<head>'
+                    . '<title property="dc:title">Foo | Bar</title>'
+                    . '</head>'
+                    . '<body>Lorem ipsum.</body>'
+                    . '<!-- Served in 0.123456s -->'
+                    . '</html>'
             ],
             'with-metadata-and-resources' => [
                 [
@@ -175,14 +175,14 @@ class FactoryTest extends TestCase
             'simple' => [
                 $factory,
                 $eSimple,
-                '<p><b>' . \Exception::class . '</b> at ' . __FILE__ . ':158</p>'
+                '<p><b>' . \Exception::class . '</b> at ' . __FILE__ . ':146</p>'
                 . '<p><b>Lorem ipsum</b></p>'
-                . '<p>alcamo\html_page\{closure}() in ' . __FILE__ . ':159</p>'
+                . '<p>alcamo\html_page\{closure}() in ' . __FILE__ . ':147</p>'
             ],
             'with-props' => [
                 $factory,
                 $eWithProps,
-                '<p><b>' . \LogicException::class . '</b> at ' . __FILE__ . ':161</p>'
+                '<p><b>' . \LogicException::class . '</b> at ' . __FILE__ . ':149</p>'
                 . '<p><b>consetetur sadipscing elitr</b></p>'
                 . '<ul><li>intValue = 42</li>'
                 . "<li>stringValue = 'foo'</li></ul>"
@@ -191,15 +191,15 @@ class FactoryTest extends TestCase
             'with-html-element-prop' => [
                 $factory,
                 $eWithHtmlElemProp,
-                '<p><b>' . \UnexpectedValueException::class . '</b> at ' . __FILE__ . ':173</p>'
+                '<p><b>' . \UnexpectedValueException::class . '</b> at ' . __FILE__ . ':161</p>'
                 . '<p><b>tempor invidunt</b></p>'
-                . '<ul><li>extraMessage = <b>ut labore et dolore magna</b></li></ul>'
+                . '<ul><li>extraMessage = &lt;b&gt;ut labore et dolore magna&lt;/b&gt;</li></ul>'
                 . '<p>renderThrowableProvider()</p>'
             ],
             'with-dom-node-prop' => [
                 $factory,
                 $eWithDomNodeProp,
-                '<p><b>' . \UnexpectedValueException::class . '</b> at ' . __FILE__ . ':183</p>'
+                '<p><b>' . \UnexpectedValueException::class . '</b> at ' . __FILE__ . ':171</p>'
                 . '<p><b>sed diam nonumy eirmod</b></p>'
                 . '<ul><li>inData = &lt;bar baz="qux"/&gt;</li></ul>'
                 . '<p>renderThrowableProvider()</p>'

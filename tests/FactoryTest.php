@@ -128,7 +128,7 @@ class FactoryTest extends TestCase
      */
     public function testRenderThrowable($factory, $throwable, $expectedString)
     {
-        $this->assertSame(
+        $this->assertStringStartsWith(
             $expectedString,
             substr(
                 $factory->renderThrowable($throwable),
@@ -172,12 +172,13 @@ class FactoryTest extends TestCase
         $eWithDomNodeProp->inData = $domDoc->documentElement->firstChild;
 
         return [
+            /* The exact display of the closure depends on the PHP version and
+             * hence it not checked in this test case. */
             'simple' => [
                 $factory,
                 $eSimple,
                 '<p><b>' . \Exception::class . '</b> at ' . __FILE__ . ':146</p>'
                 . '<p><b>Lorem ipsum</b></p>'
-                . '<p>alcamo\html_page\{closure}() in ' . __FILE__ . ':147</p>'
             ],
             'with-props' => [
                 $factory,

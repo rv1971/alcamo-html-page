@@ -166,7 +166,7 @@ class Factory implements \ArrayAccess
 
         if ($e instanceof ExceptionInterface) {
             foreach ($e->getMessageContext() as $key => $value) {
-                $props[] = "$key = $value";
+                $props[] = "$key = {$exporter->export($value)}";
             }
         }
 

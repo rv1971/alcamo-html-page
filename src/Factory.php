@@ -33,7 +33,7 @@ class Factory implements \ArrayAccess
 
     /// Default RDFa data that may be overridden by explicit settings
     public const DEFAULT_RDFA_DATA = [
-        'dc:format' => 'application/xhtml+xml; charset="UTF-8"'
+        [ 'dc:format', 'application/xhtml+xml; charset="UTF-8"' ]
     ];
 
     private $created_;             ///< Microtime of creation of this object
